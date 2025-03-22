@@ -1,0 +1,41 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+body {
+  font-family: sans-serif;
+}
+.bar {
+  stroke: white;
+  stroke-width: 1px;
+}
+.axis text {
+  font-size: 12px;
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #030303;
+  padding: 10px;
+  font-size: 13px;
+  pointer-events: none;
+  line-height: 1.4;
+  max-width: 220px;
+  z-index: 10;
+  text-align: left;
+  opacity: 95%;
+}
+
+.tooltip .name {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
