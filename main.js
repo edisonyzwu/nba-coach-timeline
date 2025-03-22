@@ -140,7 +140,7 @@ svg
   .attr("stroke", "white")
   .attr("stroke-width", 1);
 
-// 🔷 Legend
+// Legend
 const leagues = ["NBA", "G League / NCAA", "Overseas"];
 const roles = ["Player", "AC", "HC"];
 
@@ -220,4 +220,50 @@ leagues.forEach((league, row) => {
       d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
       tooltip.style("display", "none");
     });
+
+  // Annotation
+
+  const y = d3
+    .scaleBand()
+    .domain(data.map((d) => d.name))
+    .range([margin.top, height - margin.bottom])
+    .padding(0.35);
+
+  const targetCoach = data.find((d) => d.name === "Gregg Popovich");
+  const popY = y("Gregg Popovich") + y.bandwidth() / 2;
+  const popX = x(70); // 你也可以用 x(d.startAge) 动态找条的起点
+
+  svg
+    .append("defs")
+    .append("marker")
+    .attr("id", "arrow")
+    .attr("viewBox", [0, 0, 10, 10])
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto-start-reverse")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#333");
+
+  svg
+    .append("line")
+    .attr("x1", popX - 100)
+    .attr("y1", popY + 80)
+    .attr("x2", popX + 10)
+    .attr("y2", popY + 20)
+    .attr("stroke", "#333")
+    .attr("stroke-width", 1)
+    .attr("marker-end", "url(#arrow)");
+
+  svg
+    .append("text")
+    .attr("x", popX - 240)
+    .attr("y", popY + 100)
+    .attr("text-anchor", "start")
+    .attr("font-size", "12px")
+    .attr("font-weight", "100")
+    .attr("fill", "#333")
+    .text("Gregg Popovich is the longest-serving coach in NBA");
 });
