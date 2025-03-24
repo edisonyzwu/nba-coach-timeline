@@ -163,7 +163,7 @@ const boxWidth = 40;
 const boxHeight = 13;
 const spacingX = 3;
 const spacingY = 3;
-const legendStartX = margin.left + width / 4;
+const legendStartX = margin.left + width / 3;
 const legendStartY = 20;
 
 roles.forEach((role, col) => {
