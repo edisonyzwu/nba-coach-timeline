@@ -7,10 +7,10 @@
 body {
   font-family: sans-serif;
 }
-.bar {
+/* .bar {
   stroke: white;
   stroke-width: 1px;
-}
+} */
 .axis text {
   font-size: 12px;
 }

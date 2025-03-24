@@ -10,6 +10,21 @@ const x = d3
   .domain([17, 76])
   .range([margin.left, width - margin.right]);
 
+// 🔽  NBA Head Coach endAge from oldest to youngest
+data.sort((a, b) => {
+  const aHCEndAges = a.career
+    .filter((c) => c.league === "NBA" && c.role === "HC")
+    .map((c) => c.endAge);
+  const bHCEndAges = b.career
+    .filter((c) => c.league === "NBA" && c.role === "HC")
+    .map((c) => c.endAge);
+
+  const aMax = aHCEndAges.length > 0 ? Math.max(...aHCEndAges) : -Infinity;
+  const bMax = bHCEndAges.length > 0 ? Math.max(...bHCEndAges) : -Infinity;
+
+  return bMax - aMax; // 从高到低
+});
+
 const y = d3
   .scaleBand()
   .domain(data.map((d) => d.name))
@@ -27,19 +42,19 @@ function getLeagueRoleColor(league, role) {
 
   const colorMap = {
     NBA: {
-      Player: "#f59e0b", // 深橘
-      AC: "#065f46", // 深绿
-      HC: "#495783", // 深蓝
+      HC: "#1e4b78",
+      AC: "#5a86bb",
+      Player: "#7a7a7a",
     },
     "G League / NCAA": {
-      Player: "#fabf63", // 中橘
-      AC: "#10b981", // 中绿
-      HC: "#738fbd", // 中蓝
+      HC: "#1d6663",
+      AC: "#429c98",
+      Player: "#b3b3b3",
     },
     Overseas: {
-      Player: "#fde68a", // 浅橘
-      AC: "#a7f3d0", // 浅绿
-      HC: "#d1ddeb", // 浅蓝
+      HC: "#995a10",
+      AC: "#b86e15",
+      Player: "#e0e0e0",
     },
   };
 
@@ -190,7 +205,7 @@ leagues.forEach((league, row) => {
   svg
     .selectAll(".bar")
     .on("mouseover", function (event, d) {
-      d3.select(this).attr("stroke", "#000").attr("stroke-width", 2);
+      d3.select(this).attr("stroke", "black").attr("stroke-width", 0.5);
 
       const parentData = d3.select(this.parentNode).datum();
 
@@ -199,71 +214,64 @@ leagues.forEach((league, row) => {
         AC: "assistant coach",
         Player: "player",
       };
-
       const roleText = roleMap[d.role] || d.role.toLowerCase();
 
       tooltip
         .html(
           `
-          <div class="name" style="font-weight: bold; font-size: 14px;">${parentData.name}</div>
-          <div style="margin-top: 4px;">Age ${d.startAge}–${d.endAge} (${d.startYear}–${d.endYear})</div>
-          <div style="margin-top: 4px;">${d.league} ${roleText}</div>
-        `
+        <div class="name" style="font-weight: bold; font-size: 14px;">${parentData.name}</div>
+        <div style="margin-top: 4px;">Age ${d.startAge}–${d.endAge} (${d.startYear}–${d.endYear})</div>
+        <div style="margin-top: 4px;">${d.league} ${roleText}</div>
+      `
         )
         .style("display", "block");
     })
-
     .on("mousemove", function (event) {
       tooltip.style("left", event.pageX + 12 + "px").style("top", event.pageY - 28 + "px");
     })
     .on("mouseout", function () {
       d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
+
       tooltip.style("display", "none");
     });
 
   // Annotation
 
-  const y = d3
-    .scaleBand()
-    .domain(data.map((d) => d.name))
-    .range([margin.top, height - margin.bottom])
-    .padding(0.35);
+  // const targetCoach = data.find((d) => d.name === "Gregg Popovich");
+  // const popY = y("Gregg Popovich") + y.bandwidth() / 2;
+  // const popX = x(70);
 
-  const targetCoach = data.find((d) => d.name === "Gregg Popovich");
-  const popY = y("Gregg Popovich") + y.bandwidth() / 2;
-  const popX = x(70); // 你也可以用 x(d.startAge) 动态找条的起点
+  // svg
+  //   .append("defs")
+  //   .append("marker")
+  //   .attr("id", "arrow")
+  //   .attr("viewBox", [0, 0, 10, 10])
+  //   .attr("refX", 10)
+  //   .attr("refY", 5)
+  //   .attr("markerWidth", 6)
+  //   .attr("markerHeight", 6)
+  //   .attr("orient", "auto-start-reverse")
+  //   .append("path")
+  //   .attr("d", "M 0 0 L 10 5 L 0 10 z")
+  //   .attr("fill", "#333");
 
-  svg
-    .append("defs")
-    .append("marker")
-    .attr("id", "arrow")
-    .attr("viewBox", [0, 0, 10, 10])
-    .attr("refX", 10)
-    .attr("refY", 5)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto-start-reverse")
-    .append("path")
-    .attr("d", "M 0 0 L 10 5 L 0 10 z")
-    .attr("fill", "#333");
+  // svg
+  //   .append("line")
+  //   .attr("x1", popX - 100)
+  //   .attr("y1", popY + 80)
+  //   .attr("x2", popX + 10)
+  //   .attr("y2", popY + 20)
+  //   .attr("stroke", "#333")
+  //   .attr("stroke-width", 1)
+  //   .attr("marker-end", "url(#arrow)");
 
-  svg
-    .append("line")
-    .attr("x1", popX - 100)
-    .attr("y1", popY + 80)
-    .attr("x2", popX + 10)
-    .attr("y2", popY + 20)
-    .attr("stroke", "#333")
-    .attr("stroke-width", 1)
-    .attr("marker-end", "url(#arrow)");
-
-  svg
-    .append("text")
-    .attr("x", popX - 240)
-    .attr("y", popY + 100)
-    .attr("text-anchor", "start")
-    .attr("font-size", "12px")
-    .attr("font-weight", "100")
-    .attr("fill", "#333")
-    .text("Gregg Popovich is the longest-serving coach in NBA");
+  // svg
+  //   .append("text")
+  //   .attr("x", popX - 240)
+  //   .attr("y", popY + 100)
+  //   .attr("text-anchor", "start")
+  //   .attr("font-size", "12px")
+  //   .attr("font-weight", "100")
+  //   .attr("fill", "#333")
+  //   .text("Gregg Popovich is the longest-serving coach in NBA");
 });
