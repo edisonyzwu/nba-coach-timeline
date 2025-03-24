@@ -10,7 +10,7 @@ const x = d3
   .domain([17, 76])
   .range([margin.left, width - margin.right]);
 
-// 🔽  NBA Head Coach endAge from oldest to youngest
+// 🔽  NBA Head Coach endAge from youngest to oldest
 data.sort((a, b) => {
   const aHCEndAges = a.career
     .filter((c) => c.league === "NBA" && c.role === "HC")
@@ -22,7 +22,7 @@ data.sort((a, b) => {
   const aMax = aHCEndAges.length > 0 ? Math.max(...aHCEndAges) : -Infinity;
   const bMax = bHCEndAges.length > 0 ? Math.max(...bHCEndAges) : -Infinity;
 
-  return bMax - aMax; // 从高到低
+  return aMax - bMax; // from youngest to oldest
 });
 
 const y = d3
